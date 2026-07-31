@@ -1,0 +1,43 @@
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import classification_report, accuracy_score
+import matplotlib.pyplot as plt
+
+# 1. Load real-world dataset (Iris)
+iris = load_iris()
+X = iris.data   # Features: sepal length, sepal width, petal length, petal width
+y = iris.target # Target: 0 = Setosa, 1 = Versicolor, 2 = Virginica
+
+# Convert to DataFrame for clarity
+df = pd.DataFrame(X, columns=iris.feature_names)
+df["species"] = iris.target_names[y]
+
+print("First 5 rows of dataset:")
+print(df.head())
+
+# 2. Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 3. Train Decision Tree Classifier
+clf = DecisionTreeClassifier(criterion="gini", max_depth=3, random_state=42)
+clf.fit(X_train, y_train)
+
+# 4. Predictions
+y_pred = clf.predict(X_test)
+
+print("\nModel Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred, target_names=iris.target_names))
+
+# 5. Visualize Decision Tree
+plt.figure(figsize=(12, 6))
+plot_tree(clf, filled=True, feature_names=iris.feature_names, class_names=iris.target_names)
+plt.show()
+
+# 6. Classify a new sample
+# Example: Sepal length=5.1, Sepal width=3.5, Petal length=1.4, Petal width=0.2
+new_sample = [[5.1, 3.5, 1.4, 0.2]]
+prediction = clf.predict(new_sample)
+print("\nNew Sample:", new_sample)
+print("Predicted Species:", iris.target_names[prediction][0])
