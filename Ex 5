@@ -1,0 +1,46 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load dataset
+file_path = "spam.csv"  # use your correct path
+data = pd.read_csv(file_path, encoding="latin-1")
+
+print("Sample Data:\n", data[["label", "text"]].head())
+
+# Features (email text) and Labels (numeric spam/ham)
+X = data["text"]
+y = data["label_num"]
+
+# Convert text to TF-IDF
+vectorizer = TfidfVectorizer(stop_words="english", max_features=5000)
+X_features = vectorizer.fit_transform(X)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X_features, y, test_size=0.3, random_state=42
+)
+
+# Train SVM Classifier
+svm_clf = SVC(kernel="linear")
+svm_clf.fit(X_train, y_train)
+
+# Predictions
+y_pred = svm_clf.predict(X_test)
+
+print("\nModel Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred, target_names=["Ham", "Spam"]))
+
+# Test with new emails
+new_emails = [
+    "Congratulations! You've won a $1000 Walmart gift card. Click here to claim now.",
+    "Hi John, just wanted to confirm our meeting tomorrow at 10 AM."
+]
+new_features = vectorizer.transform(new_emails)
+predictions = svm_clf.predict(new_features)
+
+print("\nNew Email Predictions:")
+for email, label in zip(new_emails, predictions):
+    print(f"'{email}' → {'Spam' if label == 1 else 'Ham'}")
