@@ -1,0 +1,88 @@
+class Node:
+    def __init__(self, key):
+        self.left = None
+        self.right = None
+        self.val = key
+
+
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    if key < root.val:
+        root.left = insert(root.left, key)
+    else:
+        root.right = insert(root.right, key)
+    return root
+
+
+def dfs_search(root, key):
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if node:
+            if node.val == key:
+                return True
+            # Push right first, then left (so left is processed first)
+            stack.append(node.right)
+            stack.append(node.left)
+    return False
+
+
+# Main Program
+lucky_numbers = [17, 3, 25, 1, 7, 20, 30]
+root = None
+for num in lucky_numbers:
+    root = insert(root, num)
+
+search_key = int(input("Enter the element to search using DFS: "))
+result = dfs_search(root, search_key)
+
+if result:
+    print("Element found in BST using DFS.")
+else:
+    print("Element not found in BST using DFS.")
+# BFS in Binary Search Tree
+from collections import deque
+
+class Node:
+    def __init__(self, key):
+        self.left = None
+        self.right = None
+        self.val = key
+
+
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    if key < root.val:
+        root.left = insert(root.left, key)
+    else:
+        root.right = insert(root.right, key)
+    return root
+
+
+def bfs_search(root, key):
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        if node:
+            if node.val == key:
+                return True
+            queue.append(node.left)
+            queue.append(node.right)
+    return False
+
+
+# Main Program
+lucky_numbers = [17, 3, 25, 1, 7, 20, 30]
+root = None
+for num in lucky_numbers:
+    root = insert(root, num)
+
+search_key = int(input("Enter the element to search using BFS: "))
+result = bfs_search(root, search_key)
+
+if result:
+    print("Element found in BST using BFS.")
+else:
+    print("Element not found in BST using BFS.")
